@@ -1,0 +1,7 @@
+Add the following line to config/environments/development.rb:
+
+config.middleware.use 'Shpaml::DevelopmentMiddleware'
+
+Make your testing rake task depend on shpaml:compile.
+
+Add rake shpaml:compile to deployment procedure after updating code.
