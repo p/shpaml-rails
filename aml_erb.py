@@ -143,6 +143,8 @@ class ShortcutsBase:
             text = translator[0].sub(translator[1], text)
         
         return text
+HTML_COMMENT_SYNTAX = '<!-- %s -->'
+
 def parse_arguments():
     ''' Parses options and arguments for filter scripts.
     
@@ -161,7 +163,13 @@ def parse_arguments():
     
     usage = 'Usage: %prog [options] [input-file]'
     parser = optparse.OptionParser(usage=usage)
-    parser.add_option('-o', '--output', dest='output', help='Write output to FILE', metavar='FILE')
+    parser.add_option('-o', '--output', metavar='FILE',
+        help='Write output to FILE')
+    parser.add_option('-g', '--generated-warning', action='store_true',
+        help='Add generated file warning to output')
+    parser.add_option('-c', '--comment-syntax', metavar='FORMAT',
+        help='Comment syntax to use (e.g. "<!-- %s -->" for HTML comments, which is the default). %s will be replaced with comment text. Literal percent signs should be doubled like so: %%')
+    
     options, args = parser.parse_args()
     
     # if file name is given convert file, else convert stdin.
@@ -181,7 +189,7 @@ def parse_arguments():
     if output == '-':
         output = None
     
-    return (input, output)
+    return (input, output, options)
 
 def perform_conversion(convert_func, forward_arguments=False, pass_input_name=False):
     ''' Converts text in input file or standard input using
@@ -208,7 +216,7 @@ def perform_conversion(convert_func, forward_arguments=False, pass_input_name=Fa
     
     import sys
     
-    input, output = parse_arguments()
+    input, output, options = parse_arguments()
     
     if pass_input_name:
         if forward_arguments:
@@ -231,6 +239,13 @@ def perform_conversion(convert_func, forward_arguments=False, pass_input_name=Fa
             output_text = convert_func(input_text)
     
     assert output_text, "convert_func did not return anything to perform_conversion"
+    
+    if options.generated_warning:
+        comment_syntax = options.comment_syntax or HTML_COMMENT_SYNTAX
+        warning = comment_syntax % 'Generated file - DO NOT EDIT' + "\n"
+        if input is not None:
+            warning += comment_syntax % ('Created from: %s' % input) + "\n"
+        output_text = warning + output_text
     
     if output is None:
         sys.stdout.write(output_text)
@@ -683,13 +698,11 @@ class ErbShortcuts(ShortcutsBase):
     SELF_CLOSING_TAG = fixup(r'^(\s*)>(?=\w)', re.M, r'\1> ')
     END_ELSE = fixup(r'^(\s*)<%\s*end\s*%>\n(\1<%\s*else\s*%>)', re.M, r'\2')
     END_ELSE_WITHOUT_WHITESPACE = fixup(r'<%\s*end\s*%>\n(<%\s*else\s*%>)', None, r'\1')
-    TRANS_LINE_STATEMENT = fixup(r'^(\s*)~(\s*)(.*)$', re.M, r'\1{% trans %}\3{% endtrans %}')
 
     PRE_TRANSLATORS = [
         LINE_STATEMENT,
         LINE_EXPRESSION,
         SELF_CLOSING_TAG,
-        TRANS_LINE_STATEMENT,
     ]
 
     POST_TRANSLATORS = [
@@ -713,22 +726,20 @@ class ErbShortcuts(ShortcutsBase):
         % else
             ...
         
-        2. '% tag' shortcut as a replacement for '<% tag %>', and corresponding
+        2. '% stmt' shortcut as a replacement for '<% stmt %>', and corresponding
            shpaml-style self-closing tag:
         
-        % block bar
+        % for post in @posts
             ...
         
-        % >block
+        % >content_for :foo do
         
         3. '>tag' is equivalent to '> tag'.
         
         4. '= expression' is equivalent to '<%= expression %>'
-        
-        5. '~ text' is equivalent to '{% trans %}text{% endtrans %}'
         '''
         
-        @shpaml.syntax(r'{% > *((\w+).*)')
+        @shpaml.syntax(r'<% > *((\w+).*)')
         def SELF_CLOSING_TEMPLATE_STATEMENT(m):
             tag = m.group(1).strip()
             return '<%% %s<%% end %%>' % (m.group(1))
