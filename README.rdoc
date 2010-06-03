@@ -46,6 +46,20 @@ which will be named the same as Shpaml templates minus the <tt>.shpaml</tt> suff
 It follows that in development environment the user running the code
 must have write access to <tt>app/views</tt> subtree.
 
+You may also want to add warning notices to ERb templates generated from Shpaml
+templates stating that the generated files should not be edited. This is achieved
+by setting <tt>Shpaml::Compiler.aml_generated_warning</tt> setting to true as follows:
+
+  config.after_initialize do
+    Shpaml::Compiler.aml_generated_warning = true
+  end
+
+This statement should go in <tt>config/environments/development.rb</tt> only.
+
+Important: assignment must be in <tt>after_initialize</tt> block, otherwise it will autoload
+<tt>Shpaml::Compiler</tt>, change the setting, but then plugin init will load
+<tt>Shpaml::Compiler</tt> again changing the setting back to default.
+
 === Test environment
 
 Make your testing rake task depend on <tt>shpaml:compile</tt>. <tt>shpaml:compile</tt> will

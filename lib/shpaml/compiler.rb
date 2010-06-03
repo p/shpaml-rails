@@ -5,9 +5,11 @@ module Shpaml
   class Compiler
     @@python_exec = ['/usr/bin/env', 'python']
     @@aml = File.join(File.dirname(__FILE__), '..', '..', 'aml_erb.py')
+    @@aml_generated_warning = false
     
     cattr_accessor :python_exec
     cattr_accessor :aml
+    cattr_accessor :aml_generated_warning
     
     def compile_file(input_file, output_file)
       if fork
@@ -79,6 +81,9 @@ module Shpaml
       end
       
       cmd_line.push(self.class.aml)
+      if self.class.aml_generated_warning
+        cmd_line << '-g'
+      end
       cmd_line += args
     end
   end

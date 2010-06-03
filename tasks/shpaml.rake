@@ -1,11 +1,7 @@
 namespace :shpaml do
   desc 'Compiles all shpaml templates in app/views'
-  task :compile do
-    $: << File.join(File.dirname(__FILE__), '..', 'lib')
-    
-    require 'shpaml/discoverer'
-    require 'shpaml/compiler'
-    
+  # Need to depend on environment to pick up application changes to settings
+  task :compile => :environment do
     discoverer = Shpaml::Discoverer.new(File.join(Rails.root, 'app', 'views'))
     compiler = Shpaml::Compiler.new
     
