@@ -5,7 +5,7 @@
 Shpaml-Rails is a Ruby on Rails plugin allowing the use of templates written
 in Shpaml syntax with additional shortcuts for ERb as views.
 
-For Shpaml syntax please see [Shpaml reference].
+For Shpaml syntax please see {Shpaml reference}[http://shpaml.webfactional.com/tutorial/1].
 
 For ERb shortcuts please see [ERb section of Shpaml-Jinja reference].
 
@@ -14,7 +14,7 @@ For ERb shortcuts please see [ERb section of Shpaml-Jinja reference].
 Shpaml is a markup processor inspired by and similar to Haml, but with a
 more consice syntax, especially concerning attribute specification, and
 not tied to any one template engine. For more information about Shpaml, please
-refer to [Shpaml homepage].
+refer to {Shpaml homepage}[http://shpaml.webfactional.com/].
 
 Shpaml-Jinja project provides additional markup shortcuts for template engine
 specific syntax. One of the template engines supported by Shpaml-Jinja is
@@ -35,26 +35,27 @@ template, transform it to ERb in memory and then compile or render ERb.
 
 === Development Environment
 
-Add the following line to config/environments/development.rb:
+Add the following line to <tt>config/environments/development.rb</tt>:
 
-config.middleware.use 'Shpaml::DevelopmentMiddleware'
+  config.middleware.use 'Shpaml::DevelopmentMiddleware'
 
-This middleware will scan app/views directory of the application for any
-Shpaml templates (files ending in .shpaml), and compile them to ERb templates
-which will be named the same as Shpaml templates minus the .shpaml suffix.
+This middleware will scan <tt>app/views</tt> directory of the application for any
+Shpaml templates (files ending in <tt>.shpaml</tt>), and compile them to ERb templates
+which will be named the same as Shpaml templates minus the <tt>.shpaml</tt> suffix.
 
 It follows that in development environment the user running the code
-must have write access to app/views subtree.
+must have write access to <tt>app/views</tt> subtree.
 
 === Test environment
 
-Make your testing rake task depend on shpaml:compile. shpaml:compile will
-compile all files ending in .shpaml in app/views subtree of the application.
+Make your testing rake task depend on <tt>shpaml:compile</tt>. <tt>shpaml:compile</tt> will
+compile all files ending in <tt>.shpaml</tt> in <tt>app/views</tt> subtree of the application.
 All Shpaml templates will be recompiled, even if templates have not changed.
 
 === Production environment
 
-Add rake shpaml:compile to deployment procedure after updating code.
+Add <tt>rake shpaml:compile</tt> to deployment procedure after updating code. For
+example:
 
 == Note Concerning Generated ERb Templates
 
