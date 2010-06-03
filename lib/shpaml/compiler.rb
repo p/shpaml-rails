@@ -4,7 +4,7 @@ module Shpaml
   
   class Compiler
     @@python_exec = ['/usr/bin/env', 'python']
-    @@aml = File.join(File.dirname(__FILE__), '..', 'aml_erb.py')
+    @@aml = File.join(File.dirname(__FILE__), '..', '..', 'aml_erb.py')
     
     cattr_accessor :python_exec
     cattr_accessor :aml
