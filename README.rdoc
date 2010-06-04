@@ -27,6 +27,25 @@ environments. Shpaml-Rails bundles Shpaml-Jinja and Shpaml scripts and
 libraries and requires only an installed Python interpreter (version 2.4 or
 higher are tested) to function.
 
+== Installation
+
+Shpaml-Rails may be installed with Subversion or Git.
+
+For an installation with subversion:
+
+  ./script/plugin install http://svn.bsdpower.com/webtools/shpaml-jinja/stable
+
+For an installation with git:
+
+  ./script/plugin install git://github.com/p/shpaml-rails.git
+
+Alternatively Shpaml-Rails may be installed as a Subversion external or a Git
+submodule, or consider managing it with Piston.
+
+Submodule installation with Git using the stable branch:
+
+  git submodule add -b stable git://github.com/p/shpaml-rails.git vendor/plugins/shpaml-rails
+
 == Usage
 
 Currently Shpaml-Rails compiles Shpaml templates to ERb templates in the
